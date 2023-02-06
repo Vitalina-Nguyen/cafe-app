@@ -69,35 +69,37 @@ app.get("/api/products/count", async (_req, res) => {
 
 app.post("/api/products/addnewproduct", async (_req, res) => {
   const data = JSON.parse(_req.body);
-  const product = new shopify.api.rest.Product({session: res.locals.shopify.session});
+  const product = new shopify.api.rest.Product({
+    session: res.locals.shopify.session,
+  });
 
   product.title = data.title;
   product.description = data.description;
+  // product.price.amount = data.price;
 
-  console.log(_req.body)
+  console.log(data);
 
   const newProduct = await product.save({
     update: true,
   });
   res.status(200).send({
-    data: 'success'
+    data: "success",
   });
 });
 
+// app.get("/api/products/create", async (_req, res) => {
+//   let status = 200;
+//   let error = null;
 
-app.get("/api/products/create", async (_req, res) => {
-  let status = 200;
-  let error = null;
-
-  try {
-    await productCreator(res.locals.shopify.session);
-  } catch (e) {
-    console.log(`Failed to process products/create: ${e.message}`);
-    status = 500;
-    error = e.message;
-  }
-  res.status(status).send({ success: status === 200, error });
-});
+//   try {
+//     await productCreator(res.locals.shopify.session);
+//   } catch (e) {
+//     console.log(`Failed to process products/create: ${e.message}`);
+//     status = 500;
+//     error = e.message;
+//   }
+//   res.status(status).send({ success: status === 200, error });
+// });
 
 app.use(serveStatic(STATIC_PATH, { index: false }));
 

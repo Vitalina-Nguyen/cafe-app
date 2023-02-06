@@ -2,22 +2,21 @@ import {
   Card,
   Page,
   Layout,
-  Form, 
-  FormLayout, 
-  TextField, 
-  Button,
-  Toast
+  Form,
+  FormLayout,
+  TextField,
+  Frame,
 } from "@shopify/polaris";
 
-import {useState, useCallback} from 'react';
+import { useState, useCallback } from "react";
+import ErrorToast from "../components/ErrorToast";
 
-import {useAuthenticatedFetch} from "../hooks/useAuthenticatedFetch"
-
+import { useAuthenticatedFetch } from "../hooks/useAuthenticatedFetch";
 
 export default function HomePage() {
-
-  const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [price, setPrice] = useState("");
 
   const fetch = useAuthenticatedFetch();
 
@@ -34,49 +33,57 @@ export default function HomePage() {
   //   console.log(result)
   // }
 
-
   const addProduct = async () => {
-    if(title && description){
-      const response = await fetch ("/api/products/addnewproduct", {
+    if (title && description && price) {
+      const response = await fetch("/api/products/addnewproduct", {
         method: "POST",
         body: JSON.stringify({
           title: title,
-          description: description
-        })
-      })
-      const result = await response.json()
-    } 
-
-  }
+          description: description,
+          price: price,
+        }),
+      });
+      const result = await response.json();
+    }
+  };
 
   return (
     <Page narrowWidth>
       <Layout>
         <Layout.Section>
           <Card sectioned>
+            <Frame>
+              <Form onSubmit={addProduct}>
+                <FormLayout>
+                  <TextField
+                    value={title}
+                    onChange={setTitle}
+                    label="Title"
+                    type="text"
+                  />
 
-            <Form onSubmit={addProduct}>
-              <FormLayout>
+                  <TextField
+                    value={description}
+                    onChange={setDescription}
+                    label="Description"
+                    type="text"
+                  />
 
-                <TextField
-                  value={title}
-                  onChange={setTitle}
-                  label="Title"
-                  type="text"
-                />
+                  <TextField
+                    value={price}
+                    onChange={setPrice}
+                    label="Price"
+                    type="text"
+                  />
 
-                <TextField
-                  value={description}
-                  onChange={setDescription}
-                  label="Description"
-                  type="text"
-                />
-
-                <Button submit>Submit</Button>
-       
-              </FormLayout>
-            </Form>
-            
+                  <ErrorToast
+                    title={title}
+                    description={description}
+                    price={price}
+                  />
+                </FormLayout>
+              </Form>
+            </Frame>
           </Card>
         </Layout.Section>
       </Layout>
