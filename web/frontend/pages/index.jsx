@@ -35,18 +35,14 @@ export default function HomePage() {
   // }
 
 
-
-
-
   const addProduct = async () => {
     if(title && description){
-      const response = await fetch ("/api/products/addnewproductpost", {
+      const response = await fetch ("/api/products/addnewproduct", {
         method: "POST",
         body: JSON.stringify({
           title: title,
           description: description
         })
-        
       })
       const result = await response.json()
     } 
@@ -77,7 +73,7 @@ export default function HomePage() {
                 />
 
                 <Button submit>Submit</Button>
-                {toastMarkup}
+       
               </FormLayout>
             </Form>
             

@@ -67,7 +67,7 @@ app.get("/api/products/count", async (_req, res) => {
 //   });
 // });
 
-app.post("/api/products/addnewproductpost", async (_req, res) => {
+app.post("/api/products/addnewproduct", async (_req, res) => {
   const data = JSON.parse(_req.body);
   const product = new shopify.api.rest.Product({session: res.locals.shopify.session});
 
