@@ -2,44 +2,55 @@ import {
   Card,
   Page,
   Layout,
-  TextContainer,
-  Image,
-  Stack,
-  Link,
-  Heading,
+  Form, 
+  FormLayout, 
+  TextField, 
+  Button,
+  Toast
 } from "@shopify/polaris";
-import { TitleBar } from "@shopify/app-bridge-react";
 
-import { trophyImage } from "../assets";
-
-import { ProductsCard } from "../components";
+import {useState, useCallback} from 'react';
 
 import {useAuthenticatedFetch} from "../hooks/useAuthenticatedFetch"
 
+
 export default function HomePage() {
+
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+
   const fetch = useAuthenticatedFetch();
 
-  let productTitle;
-  let productPrice;
+  // const getProductsCount = async () => {
+  //   const response = await fetch ("/api/products/count"
+  //   )
+  //   const result = await response.json()
+  //   console.log(result)
+  // }
+
+  // const addProduct = async () => {
+  //   const response = await fetch ("/api/products/addnewproduct")
+  //   const result = await response.json()
+  //   console.log(result)
+  // }
 
 
-  const getProductsCount = async () => {
-    const response = await fetch ("/api/products/count", {
-      body: {
-        title,
-        description
-      }
-    })
-    const result = await response.json()
-    console.log(result)
-  }
+
+
 
   const addProduct = async () => {
-    const response = await fetch ("/api/products/addnewproduct")
-    const result = await response.json()
-    //productTitle = result.title
-    //productPrice = result.price
-    console.log(result)
+    if(title && description){
+      const response = await fetch ("/api/products/addnewproductpost", {
+        method: "POST",
+        body: JSON.stringify({
+          title: title,
+          description: description
+        })
+        
+      })
+      const result = await response.json()
+    } 
+
   }
 
   return (
@@ -47,8 +58,28 @@ export default function HomePage() {
       <Layout>
         <Layout.Section>
           <Card sectioned>
-            <button onClick={getProductsCount}>Click me</button>
-            <button onClick={addProduct}>Add product</button>
+
+            <Form onSubmit={addProduct}>
+              <FormLayout>
+
+                <TextField
+                  value={title}
+                  onChange={setTitle}
+                  label="Title"
+                  type="text"
+                />
+
+                <TextField
+                  value={description}
+                  onChange={setDescription}
+                  label="Description"
+                  type="text"
+                />
+
+                <Button submit>Submit</Button>
+                {toastMarkup}
+              </FormLayout>
+            </Form>
             
           </Card>
         </Layout.Section>

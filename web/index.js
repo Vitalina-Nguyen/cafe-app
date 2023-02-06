@@ -17,6 +17,19 @@ const STATIC_PATH =
 
 const app = express();
 
+app.use(/\/api(|\/[a-z]*)*/, (req, res, next) => {
+  req.body = "";
+  req.setEncoding("utf8");
+
+  req.on("data", (chunk) => {
+    req.body += chunk;
+  });
+
+  req.on("end", () => {
+    next();
+  });
+});
+
 // Set up Shopify authentication and webhook handling
 app.get(shopify.config.auth.path, shopify.auth.begin());
 app.get(
@@ -41,10 +54,27 @@ app.get("/api/products/count", async (_req, res) => {
   res.status(200).send(countData);
 });
 
-app.get("/api/products/addnewproduct", async (_req, res) => {
+// app.get("/api/products/addnewproduct", async (_req, res) => {
+//   const product = new shopify.api.rest.Product({session: res.locals.shopify.session});
+//   product.title = "Coffee 1"
+//   product.description = "3.5"
+
+//   const newProduct = await product.save({
+//     update: true,
+//   });
+//   res.status(200).send({
+//     data: 'success'
+//   });
+// });
+
+app.post("/api/products/addnewproductpost", async (_req, res) => {
+  const data = JSON.parse(_req.body);
   const product = new shopify.api.rest.Product({session: res.locals.shopify.session});
-  product.title = "Coffee 1"
-  product.description = "3.5"
+
+  product.title = data.title;
+  product.description = data.description;
+
+  console.log(_req.body)
 
   const newProduct = await product.save({
     update: true,
@@ -53,6 +83,7 @@ app.get("/api/products/addnewproduct", async (_req, res) => {
     data: 'success'
   });
 });
+
 
 app.get("/api/products/create", async (_req, res) => {
   let status = 200;
