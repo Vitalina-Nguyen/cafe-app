@@ -10,15 +10,34 @@ import {
 
 import { useState, useCallback } from "react";
 import ErrorToast from "../components/ErrorToast";
+import DropZoneImage from "../components/DropZoneImage"
 
 import { useAuthenticatedFetch } from "../hooks/useAuthenticatedFetch";
 
 export default function HomePage() {
+
+  const cleanForm = () => {
+    setTitle('')
+    setDescription('')
+    setPrice('')
+  }
+
+  const fetch = useAuthenticatedFetch();
+
+
+  //---------------------STATE-------------------------
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
 
-  const fetch = useAuthenticatedFetch();
+  const [files, setFiles] = useState([]);
+
+
+  //Изменяет state загруженных картинок 
+
+  const addImage = (files) => {
+    setFiles(files);
+  }
 
   // const getProductsCount = async () => {
   //   const response = await fetch ("/api/products/count"
@@ -41,9 +60,15 @@ export default function HomePage() {
           title: title,
           description: description,
           price: price,
+          image: files,
         }),
       });
       const result = await response.json();
+      console.log(result)
+
+      if (result.data === "success") {
+        cleanForm();
+      }
     }
   };
 
@@ -76,6 +101,8 @@ export default function HomePage() {
                     type="text"
                   />
 
+                  <DropZoneImage addImage= {addImage}/>
+
                   <ErrorToast
                     title={title}
                     description={description}
@@ -90,3 +117,4 @@ export default function HomePage() {
     </Page>
   );
 }
+

@@ -15,5 +15,14 @@
     "@shopify/app": "3.39.0",
     "@shopify/cli": "3.39.0"
   },
-  "author": "Vi"
+  "author": "Vi",
+  "description": "This is a template for building a [Shopify app](https://shopify.dev/apps/getting-started) using Node and React. It contains the basics for building a Shopify app.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Vitalina-Nguyen/cafe-app.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Vitalina-Nguyen/cafe-app/issues"
+  },
+  "homepage": "https://github.com/Vitalina-Nguyen/cafe-app#readme"
 }

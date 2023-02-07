@@ -16,7 +16,7 @@ export default function ErrorToast(props) {
 
   //Если активна - показать toast
   const toastMarkup = active ? (
-    <Toast content="Server error" error onDismiss={onDismiss} />
+    <Toast content="All fields must be filled in." error onDismiss={onDismiss} />
   ) : null;
 
   return (

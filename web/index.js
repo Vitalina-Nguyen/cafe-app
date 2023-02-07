@@ -68,24 +68,62 @@ app.get("/api/products/count", async (_req, res) => {
 // });
 
 app.post("/api/products/addnewproduct", async (_req, res) => {
+  const session = res.locals.shopify.session;
   const data = JSON.parse(_req.body);
   const product = new shopify.api.rest.Product({
-    session: res.locals.shopify.session,
+    session: session,
   });
 
   product.title = data.title;
-  product.description = data.description;
-  // product.price.amount = data.price;
+  product.body_html = data.description;
 
-  console.log(data);
-
-  const newProduct = await product.save({
+  await product.save({
     update: true,
   });
+
+  //Создание Product Variant
+  const variant = new shopify.api.rest.Variant({session: session});
+
+  variant.product_id = product.id;
+  variant.price = data.price;
+
+  await variant.save({
+    update: true,
+  });
+  
+  // console.log(newProduct)
+  // console.log(product.id)
+
+
+
+
+  
+
+  // const variantid = [variant.id]
+  // product.variantid.price = data.price;
+
+  // const newVariant = await variant.save({
+  //   update: true,
+  // });
+
+  // //Создание Image
+  // const image = new shopify.api.rest.Image({session: session});
+  // image.product_id = product.id;
+
+  // const newImage = await image.save({
+  //   update: true,
+  // });
+  
   res.status(200).send({
     data: "success",
   });
 });
+
+
+//Сохранить продукт без цены
+//Создать новый variant https://shopify.dev/api/admin-rest/2023-01/resources/product-variant#post-products-product-id-variants
+//Добавить цену в вариант через id созданного продукта
+
 
 // app.get("/api/products/create", async (_req, res) => {
 //   let status = 200;
