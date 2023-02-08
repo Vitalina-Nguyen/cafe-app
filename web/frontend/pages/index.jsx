@@ -35,8 +35,14 @@ export default function HomePage() {
 
   //Изменяет state загруженных картинок 
 
-  const addImage = (files) => {
-    setFiles(files);
+  const addImage = (imagesArray) => {
+
+    //console.log(blobsbArray)
+    setFiles(imagesArray);
+
+  // console.log('PARENT FILES', files)
+  //files.forEach( file => {console.log(file)})
+  
   }
 
   // const getProductsCount = async () => {
@@ -53,6 +59,7 @@ export default function HomePage() {
   // }
 
   const addProduct = async () => {
+  
     if (title && description && price) {
       const response = await fetch("/api/products/addnewproduct", {
         method: "POST",
@@ -60,7 +67,7 @@ export default function HomePage() {
           title: title,
           description: description,
           price: price,
-          images: files,
+          images: files[0],
         }),
       });
       const result = await response.json();
