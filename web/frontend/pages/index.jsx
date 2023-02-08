@@ -60,7 +60,7 @@ export default function HomePage() {
           title: title,
           description: description,
           price: price,
-          image: files,
+          images: files,
         }),
       });
       const result = await response.json();

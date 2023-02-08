@@ -12,6 +12,10 @@ export default function DropZoneImage(props) {
     setFiles((files) => [...files, ...acceptedFiles]);
     setRejectedFiles(rejectedFiles);
   };
+  files.forEach((file) =>{
+    console.log(window.URL.createObjectURL(file))
+  } )
+  
 
   const fileUpload = !files.length && <DropZone.FileUpload />;
   const uploadedFiles = files.length > 0 && (

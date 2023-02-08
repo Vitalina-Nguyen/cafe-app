@@ -68,8 +68,10 @@ app.get("/api/products/count", async (_req, res) => {
 // });
 
 app.post("/api/products/addnewproduct", async (_req, res) => {
+
   const session = res.locals.shopify.session;
   const data = JSON.parse(_req.body);
+
   const product = new shopify.api.rest.Product({
     session: session,
   });
@@ -83,36 +85,42 @@ app.post("/api/products/addnewproduct", async (_req, res) => {
 
   //Создание Product Variant
   const variant = new shopify.api.rest.Variant({session: session});
+  if (product.variants){
+    variant.id = product.variants[0].id;
+    variant.price = data.price;
+    variant.position = 2;
+    await variant.save({
+      update: true,
+    });
+  }
 
-  variant.product_id = product.id;
-  variant.price = data.price;
+  //Создание Image
 
-  await variant.save({
-    update: true,
-  });
-  
-  // console.log(newProduct)
-  // console.log(product.id)
+  // const productImage = new shopify.api.rest.Image({session: session});
 
+  // data.images.forEach((image) => {
+  //   productImage.src = window.URL.createObjectURL(image);
 
+  //   product.images?.push(productImage);
+  // })
 
-
-  
-
-  // const variantid = [variant.id]
-  // product.variantid.price = data.price;
-
-  // const newVariant = await variant.save({
+  // await productImage.save({
   //   update: true,
   // });
 
-  // //Создание Image
-  // const image = new shopify.api.rest.Image({session: session});
-  // image.product_id = product.id;
 
-  // const newImage = await image.save({
+  // const productImage = new shopify.api.rest.Image({session: session});
+
+  // productImage.src = window.URL.createObjectURL(data.images[0]);
+
+  // if (product.images) {
+  //   product.images[0].push(productImage);
+  // }
+
+  // await productImage.save({
   //   update: true,
   // });
+
   
   res.status(200).send({
     data: "success",
