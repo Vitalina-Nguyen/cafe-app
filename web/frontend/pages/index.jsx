@@ -10,20 +10,18 @@ import {
 
 import { useState, useCallback } from "react";
 import ErrorToast from "../components/ErrorToast";
-import DropZoneImage from "../components/DropZoneImage"
+import DropZoneImage from "../components/DropZoneImage";
 
 import { useAuthenticatedFetch } from "../hooks/useAuthenticatedFetch";
 
 export default function HomePage() {
-
   const cleanForm = () => {
-    setTitle('')
-    setDescription('')
-    setPrice('')
-  }
+    setTitle("");
+    setDescription("");
+    setPrice("");
+  };
 
   const fetch = useAuthenticatedFetch();
-
 
   //---------------------STATE-------------------------
   const [title, setTitle] = useState("");
@@ -32,18 +30,15 @@ export default function HomePage() {
 
   const [files, setFiles] = useState([]);
 
-
-  //Изменяет state загруженных картинок 
+  //Изменяет state загруженных картинок
 
   const addImage = (imagesArray) => {
-
     //console.log(blobsbArray)
     setFiles(imagesArray);
 
-  // console.log('PARENT FILES', files)
-  //files.forEach( file => {console.log(file)})
-  
-  }
+    // console.log('PARENT FILES', files)
+    //files.forEach( file => {console.log(file)})
+  };
 
   // const getProductsCount = async () => {
   //   const response = await fetch ("/api/products/count"
@@ -59,7 +54,6 @@ export default function HomePage() {
   // }
 
   const addProduct = async () => {
-  
     if (title && description && price) {
       const response = await fetch("/api/products/addnewproduct", {
         method: "POST",
@@ -71,7 +65,7 @@ export default function HomePage() {
         }),
       });
       const result = await response.json();
-      console.log(result)
+      console.log(result);
 
       if (result.data === "success") {
         cleanForm();
@@ -108,7 +102,7 @@ export default function HomePage() {
                     type="text"
                   />
 
-                  <DropZoneImage addImage= {addImage}/>
+                  <DropZoneImage addImage={addImage} />
 
                   <ErrorToast
                     title={title}
@@ -124,4 +118,3 @@ export default function HomePage() {
     </Page>
   );
 }
-

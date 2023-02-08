@@ -68,7 +68,6 @@ app.get("/api/products/count", async (_req, res) => {
 // });
 
 app.post("/api/products/addnewproduct", async (_req, res) => {
-
   const session = res.locals.shopify.session;
   const data = JSON.parse(_req.body);
 
@@ -84,8 +83,8 @@ app.post("/api/products/addnewproduct", async (_req, res) => {
   });
 
   //Создание Product Variant
-  const variant = new shopify.api.rest.Variant({session: session});
-  if (product.variants){
+  const variant = new shopify.api.rest.Variant({ session: session });
+  if (product.variants) {
     variant.id = product.variants[0].id;
     variant.price = data.price;
     await variant.save({
@@ -95,40 +94,45 @@ app.post("/api/products/addnewproduct", async (_req, res) => {
 
   //Создание Image
 
-  const productImage = new shopify.api.rest.Image({session: session});
-    productImage.product_id = product.id;
-    productImage.attachment = data.images;
-    productImage.filename = `image_${data.title}.jpg`;
-    productImage.position = 1;
-    //console.log(data.images[0])
+  const productImage = new shopify.api.rest.Image({ session: session });
+  productImage.product_id = product.id;
+  productImage.attachment = String(data.images).split("base64,")[1];
+  productImage.filename = `image_${data.title}.jpg`;
+  productImage.position = 1;
+  productImage.width = 100;
+  productImage.height = 100;
+  productImage.metafields = [
+    {
+      key: "new",
+      value: "newvalue",
+      type: "single_line_text_field",
+      namespace: "global",
+    },
+  ];
+  //console.log(productImage);
 
-    await productImage.save({
-      update: true,
-    });
+  await productImage.save({
+    update: true,
+  });
 
   //productImage.product_id = product.id;
   if (product.images) {
-    
     // product.images = [
     //   {
     //     id: productImage.id,
     //     src: data.images[0]
     //   }
     // ];
-    
-    
   }
-  
+
   res.status(200).send({
     data: "success",
   });
 });
 
-
 //Сохранить продукт без цены
 //Создать новый variant https://shopify.dev/api/admin-rest/2023-01/resources/product-variant#post-products-product-id-variants
 //Добавить цену в вариант через id созданного продукта
-
 
 // app.get("/api/products/create", async (_req, res) => {
 //   let status = 200;
