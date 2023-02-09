@@ -1,7 +1,7 @@
-import { Card, Page, Layout, Stack } from "@shopify/polaris";
+import { Card, Page, Layout } from "@shopify/polaris";
 import { useAuthenticatedFetch } from "../hooks/useAuthenticatedFetch";
-
 import { useState, useEffect  } from "react";
+import AllProductsList  from "../components/AllProductsList";
 
 
 export default function AddToCollection() {
@@ -18,19 +18,25 @@ export default function AddToCollection() {
 
   console.log("Result: ", state);
 
+  
   return (
     <Page narrowWidth>
       <Layout>
         <Layout.Section oneThird>
      
           <Card sectioned title="All products">
-
+          {state != null && (
+            <AllProductsList itemsArray= {state}/>
+          )}
           </Card>
+
         </Layout.Section>
         <Layout.Section oneThird>
     
           <Card sectioned title="Collection">
+            
           </Card>
+
         </Layout.Section>
       </Layout>
     </Page>
