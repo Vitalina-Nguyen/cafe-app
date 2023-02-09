@@ -1,27 +1,29 @@
-import {DropZone, Stack, Thumbnail, Banner, List} from '@shopify/polaris';
+import {DropZone, Stack, Thumbnail, Banner, List, Button} from '@shopify/polaris';
 import {useState, useCallback} from 'react';
+
+
 
 
 export default function DropZoneImage({ addImage }) {
   
   //Local state
-  const [files, setFiles] = useState([]);
-  const [rejectedFiles, setRejectedFiles] = useState([]);
-  const hasError = rejectedFiles.length > 0;
+  let [files, setFiles] = useState([]);
+  let [rejectedFiles, setRejectedFiles] = useState([]);
+  let convertedImages = [];
+  let hasError = rejectedFiles.length > 0;
+
+
+  const remove = () => {
+    setFiles([]);
+    setRejectedFiles([]);
+    hasError = false
+    addImage(convertedImages);
+  };
 
   const handleDrop = useCallback(async (_droppedFiles, acceptedFiles, rejectedFiles) => {
     const newFiles = [...files, ...acceptedFiles];
     setFiles(newFiles);
     setRejectedFiles(rejectedFiles);
-
-
-    // newFiles.forEach( file => {
-    //   let reader = new FileReader();
-    //   reader.readAsDataURL(file);
-    //   reader.onloadend = function () {
-    //     reader.result;
-    //   }
-    // })
 
     const filePromises = newFiles.map((file) => {
     
@@ -34,32 +36,15 @@ export default function DropZoneImage({ addImage }) {
           resolve(result)
         }
       })
-
-    // new Promise((resolve, reject) => {
-    //   const reader = new FileReader();
-    //   reader.onload = (event) => {
-        
-    //     resolve(event.target.result)
-    //   };
-    //   let i = reader.readAsDataURL(file);
-    //   console.log(resolve(i))
     })
-    const convertedImages = await Promise.all(filePromises)
-    console.log(convertedImages)
-    // {
-
-    //   reader.readAsDataURL(file).result;
-    //   console.log('Base64 String - ', base64String);
-
-    // });
-
+    convertedImages = await Promise.all(filePromises)
     addImage(convertedImages);
 
   }, [files, rejectedFiles]);
 
   const fileUpload = !files.length && <DropZone.FileUpload />;
   const uploadedFiles = files.length > 0 && (
-    <Stack vertical>
+    <Stack vertical = {false}>
       {files.map((file, index) => (
         <Stack alignment="center" key={index}>
           <Thumbnail
@@ -67,12 +52,6 @@ export default function DropZoneImage({ addImage }) {
             alt={file.name}
             source={window.URL.createObjectURL(file)}
           />
-          {/* <div>
-            {file.name}{' '}
-            <Text variant="bodySm" as="p">
-              {file.size} bytes
-            </Text>
-          </div> */}
         </Stack>
       ))}
     </Stack>
@@ -98,10 +77,15 @@ export default function DropZoneImage({ addImage }) {
       {errorMessage}
       <DropZone accept="image/*" 
                 type="image" 
-                onDrop={handleDrop}>
+                onDrop={handleDrop}
+                allowMultiple = {false}>
         {uploadedFiles}
         {fileUpload}
       </DropZone>
+      {files.length > 0 && (
+          <Button plain destructive onClick={remove}>Remove images</Button>
+        )}
     </Stack>
   );
 }
+

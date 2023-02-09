@@ -54,18 +54,42 @@ app.get("/api/products/count", async (_req, res) => {
   res.status(200).send(countData);
 });
 
-// app.get("/api/products/addnewproduct", async (_req, res) => {
-//   const product = new shopify.api.rest.Product({session: res.locals.shopify.session});
-//   product.title = "Coffee 1"
-//   product.description = "3.5"
 
-//   const newProduct = await product.save({
-//     update: true,
-//   });
-//   res.status(200).send({
-//     data: 'success'
-//   });
-// });
+app.get("/api/products.json", async (_req, res) => {
+  const session = res.locals.shopify.session;
+  let allPr;
+  
+
+  let status = 200;
+  let error = null;
+  
+  try {
+
+    const allProducts = await shopify.api.rest.Product.all({ session: session });
+
+    allPr = allProducts.map( pr => {
+      const price = (pr.variants) ? pr.variants[0].price : '';
+      const image = (pr.image) ? pr.image.src : '';
+      return (
+        {
+          id: pr.id,
+          title: pr.title,
+          price: price,
+          image: image,
+        }
+      )
+    })
+    
+    
+  } catch (e) {
+    console.log(`Failed to get product(s): ${e.message}`);
+    status = 500;
+    error = e.message;
+  }
+
+  res.status(status).send(allPr);
+})
+
 
 app.post("/api/products/addnewproduct", async (_req, res) => {
   const session = res.locals.shopify.session;
@@ -93,24 +117,21 @@ app.post("/api/products/addnewproduct", async (_req, res) => {
   }
 
   //Создание Image
-
-  const productImage = new shopify.api.rest.Image({ session: session });
-  productImage.product_id = product.id;
-  productImage.attachment = String(data.images).split("base64,")[1];
-  productImage.position = 1;
-
-  await productImage.save({
-    update: true,
-  });
+  if (data.images){
+    const productImage = new shopify.api.rest.Image({ session: session });
+    productImage.product_id = product.id;
+    productImage.attachment = String(data.images).split("base64,")[1];
+    productImage.position = 1;
+  
+    await productImage.save({
+      update: true,
+    });
+  }
 
   res.status(200).send({
     data: "success",
   });
 });
-
-//Сохранить продукт без цены
-//Создать новый variant https://shopify.dev/api/admin-rest/2023-01/resources/product-variant#post-products-product-id-variants
-//Добавить цену в вариант через id созданного продукта
 
 // app.get("/api/products/create", async (_req, res) => {
 //   let status = 200;
