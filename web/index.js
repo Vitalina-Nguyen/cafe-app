@@ -97,33 +97,11 @@ app.post("/api/products/addnewproduct", async (_req, res) => {
   const productImage = new shopify.api.rest.Image({ session: session });
   productImage.product_id = product.id;
   productImage.attachment = String(data.images).split("base64,")[1];
-  productImage.filename = `image_${data.title}.jpg`;
   productImage.position = 1;
-  productImage.width = 100;
-  productImage.height = 100;
-  productImage.metafields = [
-    {
-      key: "new",
-      value: "newvalue",
-      type: "single_line_text_field",
-      namespace: "global",
-    },
-  ];
-  //console.log(productImage);
 
   await productImage.save({
     update: true,
   });
-
-  //productImage.product_id = product.id;
-  if (product.images) {
-    // product.images = [
-    //   {
-    //     id: productImage.id,
-    //     src: data.images[0]
-    //   }
-    // ];
-  }
 
   res.status(200).send({
     data: "success",
