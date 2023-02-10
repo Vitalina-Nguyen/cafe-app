@@ -1,32 +1,25 @@
-import {Card, ResourceList, ResourceItem, Thumbnail} from '@shopify/polaris';
-import {useState} from 'react';
+import {Card, ResourceList, ResourceItem, Thumbnail, TextContainer, DisplayText} from '@shopify/polaris';
 
-export default function AllProductsList({itemsArray}) {
-
-  const [selectedItems, setSelectedItems] = useState([]);
+export default function AllProductsList({itemsArray, selectedId, setSelectedId}) {
 
   const resourceName = {
     singular: 'product',
     plural: 'products',
   };
 
-  console.log("itemsArray= ", itemsArray);
   const items = itemsArray.map ( item => {
   return {
     id: item.id,
-    url: `products/${item.name}`,
     name: item.title,
     price: item.price,
+    source: item.image,
     media: (
-        <Thumbnail source= {item.url} />
+        <Thumbnail source= {item.image} />
     )
   }
 })
   
   console.log("AllProducts items= ", items);
-
-
-
 
   return (
     <Card>
@@ -34,16 +27,16 @@ export default function AllProductsList({itemsArray}) {
         resourceName={resourceName}
         items={items}
         renderItem={renderItem}
-        selectedItems={selectedItems}
-        onSelectionChange={setSelectedItems}
+        selectedItems={selectedId}
+        onSelectionChange={setSelectedId}
         selectable
       />
     </Card>
   );
 
   function renderItem(item) {
-    const {id, name} = item;
-    const media = <Thumbnail source= {url}
+    const {id, name, price, source} = item;
+    const media = <Thumbnail source= {source}
                              alt={name}/>;
 
     return (
@@ -52,16 +45,9 @@ export default function AllProductsList({itemsArray}) {
         media={media}
         accessibilityLabel={`View details for ${name}`}
       >
-        <TextContainer variant="bodyMd" fontWeight="bold" as="h3">
-          {name}
-        </TextContainer>
-
-        <div>{price}</div>
+        <DisplayText size="small" >{name}</DisplayText>
+        <div>{price}$</div>
       </ResourceItem>
     );
   }
 }
-
-// <Text variant="bodyMd" fontWeight="bold" as="h3">
-//           {name}
-//         </Text>

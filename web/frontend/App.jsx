@@ -21,11 +21,7 @@ export default function App() {
             <NavigationMenu
               navigationLinks={[
                 {
-                  label: "Add product",
-                  destination: "/addproduct",
-                },
-                {
-                  label: "Page name copy",
+                  label: "Collections",
                   destination: "/addtocollection",
                 },
               ]}

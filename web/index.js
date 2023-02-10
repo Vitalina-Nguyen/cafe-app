@@ -55,11 +55,9 @@ app.get("/api/products/count", async (_req, res) => {
 });
 
 
-app.get("/api/products.json", async (_req, res) => {
+app.get("/api/products/all", async (_req, res) => {
   const session = res.locals.shopify.session;
   let allPr;
-  
-
   let status = 200;
   let error = null;
   
@@ -95,9 +93,7 @@ app.post("/api/products/addnewproduct", async (_req, res) => {
   const session = res.locals.shopify.session;
   const data = JSON.parse(_req.body);
 
-  const product = new shopify.api.rest.Product({
-    session: session,
-  });
+  const product = new shopify.api.rest.Product({ session: session });
 
   product.title = data.title;
   product.body_html = data.description;
@@ -133,19 +129,32 @@ app.post("/api/products/addnewproduct", async (_req, res) => {
   });
 });
 
-// app.get("/api/products/create", async (_req, res) => {
-//   let status = 200;
-//   let error = null;
 
-//   try {
-//     await productCreator(res.locals.shopify.session);
-//   } catch (e) {
-//     console.log(`Failed to process products/create: ${e.message}`);
-//     status = 500;
-//     error = e.message;
-//   }
-//   res.status(status).send({ success: status === 200, error });
-// });
+app.post("/api/collection/create", async (_req, res) => {
+  const session = res.locals.shopify.session;
+  
+  // console.log("TYPE", typeof JSON.stringify(_req.body));
+  // console.log("DATA: ", _req.body);
+  const data = JSON.parse(_req.body); 
+
+  const custom_collection = new shopify.api.rest.CustomCollection({session: session});
+  custom_collection.title = data.title;
+
+  custom_collection.collects = data.selectedId.map( id => {
+    return ({
+      "product_id": id,
+    })
+  });
+  
+  await custom_collection.save({
+    update: true,
+  });
+
+  res.status(200).send({
+    data: "success",
+  });
+});
+
 
 app.use(serveStatic(STATIC_PATH, { index: false }));
 
