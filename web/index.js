@@ -132,9 +132,7 @@ app.post("/api/products/addnewproduct", async (_req, res) => {
 
 app.post("/api/collection/create", async (_req, res) => {
   const session = res.locals.shopify.session;
-  
-  // console.log("TYPE", typeof JSON.stringify(_req.body));
-  // console.log("DATA: ", _req.body);
+
   const data = JSON.parse(_req.body); 
 
   const custom_collection = new shopify.api.rest.CustomCollection({session: session});
@@ -154,7 +152,6 @@ app.post("/api/collection/create", async (_req, res) => {
     data: "success",
   });
 });
-
 
 app.use(serveStatic(STATIC_PATH, { index: false }));
 

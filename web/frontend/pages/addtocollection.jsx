@@ -1,24 +1,25 @@
-import { Card, Page, Layout, TextField, Button } from "@shopify/polaris";
+import { Card, Page, Layout, TextField, Button, Spinner } from "@shopify/polaris";
 import { useAuthenticatedFetch } from "../hooks/useAuthenticatedFetch";
 import { useState, useEffect, useCallback  } from "react";
 
 import AllProductsList  from "../components/AllProductsList";
-import { render } from "react-dom";
+
+import s from '../scss/addtocollection.scss'
+
 
 export default function AddToCollection() {
 
   const fetch = useAuthenticatedFetch();
+
+  const [state, setState] = useState([]);
+  const [inputText, setinputText] = useState('');
+  const [selectedId, setSelectedId] = useState([]);
 
   useEffect( async () => {
     const response = await fetch ("/api/products/all");
     const result = await response.json();
     setState(result)  
     }, []);
-  
-
-  const [state, setState] = useState([]);
-  const [inputText, setinputText] = useState('');
-  const [selectedId, setSelectedId] = useState([]);
 
   const setInputState = useCallback((newValue) => setinputText(newValue), []);
 
@@ -52,31 +53,35 @@ export default function AddToCollection() {
 
   return (
     <Page narrowWidth>
+      {state.length > 0 && (
+        <Layout>
+          <Layout.Section oneThird>
+      
+            <Card sectioned title="All products">
+            {state != null && (
+              <AllProductsList itemsArray= {state} selectedId = {selectedId} setSelectedId= {setSelectedId}/>
+            )}
+            </Card>
 
-      <Layout>
+          </Layout.Section>
         <Layout.Section oneThird>
-     
-          <Card sectioned title="All products">
-          {state != null && (
-            <AllProductsList itemsArray= {state} selectedId = {selectedId} setSelectedId= {setSelectedId}/>
-          )}
-          </Card>
+      
+            <Card sectioned title="Collection">
+              <TextField
+                label="Add a new collection"
+                value={inputText}
+                onChange={setInputState}
+                autoComplete="off"
+              />
+              <Button  primary onClick={addCollection}>Save collection</Button>
+            </Card>
 
-        </Layout.Section>
-      <Layout.Section oneThird>
-    
-          <Card sectioned title="Collection">
-            <TextField
-              label="Add a new collection"
-              value={inputText}
-              onChange={setInputState}
-              autoComplete="off"
-            />
-            <Button primary onClick={addCollection}>Save collection</Button>
-          </Card>
-
-        </Layout.Section>
-      </Layout>
+          </Layout.Section>
+        </Layout>
+      )}
+      {state.length == 0 && (
+      <Spinner accessibilityLabel="Loading" size="large" />
+      )};
     </Page>
   );
 }

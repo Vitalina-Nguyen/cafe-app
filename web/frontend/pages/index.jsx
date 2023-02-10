@@ -33,13 +33,7 @@ export default function HomePage() {
   const [price, setPrice] = useState("");
 
   const [files, setFiles] = useState([]);
-
-  //Изменяет state загруженных картинок
-
-  const addImage = (imagesArray) => {
-    setFiles(imagesArray);
-  };
-
+  const [imagesId, setImagesId] = useState([]);
 
   const addProduct = async () => {
     if (title && description && price) {
@@ -49,7 +43,7 @@ export default function HomePage() {
           title: title,
           description: description,
           price: price,
-          images: files[0],
+          images: imagesId[0],
         }),
       });
 
@@ -91,7 +85,7 @@ export default function HomePage() {
                     type="text"
                   />
 
-                  <DropZoneImage addImage={addImage} />
+                  <DropZoneImage files={files} setFiles= {setFiles} setImagesId= {setImagesId}/>
 
                   <ErrorToast
                     title={title}

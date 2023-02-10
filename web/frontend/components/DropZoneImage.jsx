@@ -2,12 +2,9 @@ import {DropZone, Stack, Thumbnail, Banner, List, Button} from '@shopify/polaris
 import {useState, useCallback} from 'react';
 
 
-
-
-export default function DropZoneImage({ addImage }) {
+export default function DropZoneImage({ files, setFiles, setImagesId }) {
   
   //Local state
-  let [files, setFiles] = useState([]);
   let [rejectedFiles, setRejectedFiles] = useState([]);
   let convertedImages = [];
   let hasError = rejectedFiles.length > 0;
@@ -17,7 +14,7 @@ export default function DropZoneImage({ addImage }) {
     setFiles([]);
     setRejectedFiles([]);
     hasError = false
-    addImage(convertedImages);
+    setImagesId([])
   };
 
   const handleDrop = useCallback(async (_droppedFiles, acceptedFiles, rejectedFiles) => {
@@ -38,7 +35,7 @@ export default function DropZoneImage({ addImage }) {
       })
     })
     convertedImages = await Promise.all(filePromises)
-    addImage(convertedImages);
+    setImagesId(convertedImages);
 
   }, [files, rejectedFiles]);
 
